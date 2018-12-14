@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Temsina Igra</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <!--<script src="https://code.createjs.com/createjs-2015.05.21.min.js"></script>-->
+    <<!--script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>-->
+    <script src="createjs.min.js"></script>
+    <script src="js/CustomMethods.js"></script>
+    <script src="js/Game.js"></script>
+    <script src="js/Platform.js"></script>
+    <script>
+
+        "use strict";
+        var stage;
+        var queue;
+        var game;
+        var percentLoaded;
+        var loading;
+
+        function init(){
+
+            stage = new createjs.Stage(document.getElementById("gameStage"));
+            queue = new createjs.LoadQueue(false);
+            createjs.Sound.alternateExtensions = ["mp3"];
+            queue.installPlugin(createjs.Sound); // this enables SoundJS to just play sound without registering
+
+            var x = (1280/2);
+            var y = (720/2);
+
+            percentLoaded = new createjs.Text("" , "54px Teko" , "white");
+            percentLoaded.textAlign = "center";
+            percentLoaded.textBaseline = "middle";
+            percentLoaded.x = x;
+            percentLoaded.y = y;
+
+            var background = new createjs.Shape();
+            background.graphics.beginFill("black").drawRect(0,0,1280,720);
+
+            loading = new createjs.Shape();
+            loading.x = x;
+            loading.y = y;
+            loading.rotation = -90;
+            stage.addChild(background,loading,percentLoaded);
+            startAssetsLoading();
+        }
+
+        function startAssetsLoading() {
+            queue.on("complete", loadComplete);
+            queue.on("progress", handleProgress);
+            queue.loadManifest([
+                {id: "welcome", src:"images/welcome.jpg"},
+                {id: "playButton", src:"images/play.png"},
+                {id: "background", src:"images/main_bg.png"},
+                {id: "overlay", src:"images/overlay.png"},
+                {id: "right_sidebar", src:"images/right_sidebar.png"},
+                {id: "bridge", src:"images/bridge.png"},
+                {id: "button", src:"images/button.png"},
+                {id: "restartButton", src:"images/restartButton.png"},
+                {id: "inGameRestartButton", src:"images/inGameRestartButton.png"},
+                {id: "sheep", src:"images/player.png"},
+                {id: "life", src:"images/life.png"}
+            ]);
+        }
+
+        function handleProgress(event){
+            percentLoaded.text = Math.round(event.progress* 100) + " %";
+            var fill = Math.round(event.progress * 360);
+            loading.graphics.clear().setStrokeStyle(20).beginStroke("#d0ff00").arc(0, 0, 150, 0, (Math.PI/180)*fill).endStroke();
+            stage.update();
+        }
+
+        function loadComplete() {
+            stage.removeAllChildren();
+            percentLoaded = null;
+            game = new system.Game();
+            stage.addChild(game);
+            loading = null;
+            setupStage();
+        }
+
+        function setupStage(){
+            createjs.Ticker.timingMode = createjs.Ticker.RAF;
+            createjs.Ticker.addEventListener("tick", function(e){ // e needs because animation wont change framerate without it
+                game.render(e);
+            });
+        }
+
+        function resize(){
+            var cont = document.getElementById("gameStage");
+            var c = cont.getContext("2d");
+            var w = 1280 / (1280/window.innerWidth);
+            var h = 720 / (720/window.innerHeight);
+
+            c.width = w;
+            c.height = h;
+        }
+
+        document.onreadystatechange = function () {
+            if (document.readyState === 'complete') {
+                resize();
+                window.addEventListener('resize', resize);
+            }
+        };
+
+    </script>
+
+</head>
+<body onload="init();" oncontextmenu="return false">
+
+<div class="container">
+    <canvas id="gameStage" width="1280" height="720"></canvas>
+</div>
+</body>
+</html>
