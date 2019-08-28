@@ -74,11 +74,20 @@ this.system = this.system || {};
         button.x = 408;
         button.y = 540;
         button.addEventListener("click" , function () {
+            if(is.mobile()){
+                that.checkFs();
+            }
             that.removeChild(background,button);
             that.animateCounter();
             that.startInterval();
         });
         this.addChild(background,button);
+    };
+
+    p.checkFs = function() {
+        if(!window.parent.document.fullscreenElement){
+            document.documentElement.requestFullscreen();
+        }
     };
 
     p.setBackground = function () {

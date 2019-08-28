@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <!--<script src="https://code.createjs.com/createjs-2015.05.21.min.js"></script>-->
     <<!--script src="https://code.createjs.com/1.0.0/createjs.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/is_js/0.9.0/is.min.js"></script>
     <script src="createjs.min.js"></script>
     <script src="js/compressed.js"></script>
 <!--    <script src="js/CustomMethods.js"></script>
@@ -101,7 +102,9 @@
         document.onreadystatechange = function () {
             if (document.readyState === 'complete') {
                 resize();
-                window.addEventListener('resize', resize);
+                if(is.not.mobile()){
+                    window.addEventListener('resize', resize);
+                }
             }
         };
 
