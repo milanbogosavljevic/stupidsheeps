@@ -85,7 +85,7 @@ this.system = this.system || {};
     };
 
     p.checkFs = function() {
-        if(!window.parent.document.fullscreenElement){
+        if(!document.fullscreenElement){
             document.documentElement.requestFullscreen();
         }
     };
